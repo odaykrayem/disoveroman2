@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "774841898346",
+    "project_id": "discover-oman-a4b06",
+    "storage_bucket": "discover-oman-a4b06.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:774841898346:android:d86af5276b3543b374c113",
+        "android_client_info": {
+          "package_name": "com.discoveroman.discoveroman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "774841898346-2dthb0rq1g7oe3476ir0cjs1afbmepvn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNo6p1uuWeWFyLD59o3H_p2SgXLBHphJg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "774841898346-2dthb0rq1g7oe3476ir0cjs1afbmepvn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "774841898346-ajoe3o9lc2snhk5mf71305oj38g6hav3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.discoveroman.discoveroman"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
