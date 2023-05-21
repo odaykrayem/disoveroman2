@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:skeletons/skeletons.dart';
+import '../common/values/color.dart';
 import '../data/hotel_data.dart';
 import '../models/hotel.dart';
 import '../widgets/hotel_item.dart';
@@ -35,7 +36,7 @@ class _HotelsScreenState extends State<HotelsScreen> {
           centerTitle: true,
           title: Text(widget.title,
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Colors.black45,
+                    color: AppColors.primaryElementStatus,
                     overflow: TextOverflow.visible,
                   )),
         ),

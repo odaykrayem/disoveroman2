@@ -68,7 +68,10 @@ class HotelItem extends StatelessWidget {
                       ])),
                   child: Text(
                     hotel.title,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge!
+                        .copyWith(fontFamily: 'BebasNeue'),
                     overflow: TextOverflow.fade,
                   ),
                 )

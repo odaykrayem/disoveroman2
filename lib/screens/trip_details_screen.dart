@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletons/skeletons.dart';
@@ -9,6 +8,7 @@ import '../common/values/constant.dart';
 import '../models/trip.dart';
 import '../utils/flutter_toast.dart';
 import '../utils/global.dart';
+import '../widgets/card_container.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   final Trip trip;
@@ -25,47 +25,104 @@ class TripDetailsScreen extends StatefulWidget {
 }
 
 class _TripDetailsScreenState extends State<TripDetailsScreen> {
+  DateTime selectedDate = DateTime.now();
+  var db = FirebaseFirestore.instance;
+
   Widget buildSelectionTitle(BuildContext context, String titleText) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      // margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       alignment: Alignment.topLeft,
       child: Text(
         titleText,
-        style: Theme.of(context).textTheme.headlineSmall,
+        style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              fontSize: 20,
+              fontFamily: 'Brand-Bold',
+              color: AppColors.primary_bg,
+            ),
       ),
     );
   }
 
-  Widget buildListViewContainer(Widget child) {
+  Widget buildItemsListContainer(
+      {required List<String> list, double height = 200}) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey),
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(10),
       ),
-      height: 200,
-      padding: const EdgeInsets.all(10),
+      height: height,
       margin: const EdgeInsets.symmetric(horizontal: 15),
-      child: child,
+      child: Center(
+        child: list.length > 3
+            ? SingleChildScrollView(
+                child: Wrap(
+                  spacing: 20,
+                  clipBehavior: Clip.none,
+                  children: list
+                      .map((e) => Chip(
+                            label: e.length > 40
+                                ? SizedBox(
+                                    // height: 100,
+                                    // width:
+                                    //     (MediaQuery.of(context).size.width / 4) * 3.5,
+                                    child: Row(
+                                      children: [
+                                        Flexible(
+                                            child: Text(
+                                          e,
+                                          overflow: TextOverflow.visible,
+                                          maxLines: 2,
+                                          softWrap: true,
+                                        )),
+                                      ],
+                                    ),
+                                  )
+                                : Text(
+                                    e,
+                                  ),
+                          ))
+                      .toList(),
+                ),
+              )
+            : Wrap(
+                spacing: 20,
+                clipBehavior: Clip.none,
+                children: list
+                    .map((e) => Chip(
+                          label: e.length > 40
+                              ? SizedBox(
+                                  // height: 100,
+                                  // width:
+                                  //     (MediaQuery.of(context).size.width / 4) * 3.5,
+                                  child: Row(
+                                    children: [
+                                      Flexible(
+                                          child: Text(
+                                        e,
+                                        overflow: TextOverflow.visible,
+                                        maxLines: 2,
+                                        softWrap: true,
+                                      )),
+                                    ],
+                                  ),
+                                )
+                              : Text(
+                                  e,
+                                ),
+                        ))
+                    .toList(),
+              ),
+      ),
     );
   }
 
-  DateTime selectedDate = DateTime.now();
-  var db = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
-    // final tripId = trip.id;
     final trip = widget.trip;
     Trip? realTimeTrip;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(trip.title,
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: Colors.black45,
-                  overflow: TextOverflow.visible,
-                )),
-        backgroundColor: Colors.white,
-      ),
       body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
           stream: FirebaseFirestore.instance
               .collection('trips')
@@ -80,122 +137,181 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
               if (!snapshot.hasData) {
                 return SkeletonListView();
               }
-              // debugPrint('${snapshot.data!['name']}');
               try {
                 realTimeTrip = Trip.fromJson(snapshot.data!.data()!, trip.id);
-
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 300,
-                        width: double.infinity,
-                        child: trip.images.contains('google')
-                            ? Image.network(
-                                realTimeTrip!.images,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset(
-                                realTimeTrip!.images,
-                                fit: BoxFit.cover,
-                              ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      buildSelectionTitle(context, 'Activities'),
-                      buildListViewContainer(
-                        ListView.builder(
-                            itemCount: realTimeTrip!.activities.length,
-                            itemBuilder: (ctc, index) => Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 5,
-                                      horizontal: 10,
+                return CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      automaticallyImplyLeading: false,
+                      expandedHeight: 300,
+                      flexibleSpace: Stack(
+                        children: [
+                          Positioned(
+                            top: 0,
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: SizedBox(
+                              height: 300,
+                              width: double.infinity,
+                              child: trip.images.contains('google')
+                                  ? Image.network(
+                                      trip.images,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.asset(
+                                      trip.images,
+                                      fit: BoxFit.cover,
                                     ),
-                                    child: Text(
-                                      realTimeTrip!.activities[index],
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                )),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      buildSelectionTitle(context, 'Available rooms'),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        height: 50,
-                        padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Text('${realTimeTrip!.rooms}'),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      buildSelectionTitle(context, 'Program'),
-                      buildListViewContainer(
-                        ListView.builder(
-                          itemCount: realTimeTrip!.program.length,
-                          itemBuilder: (ctx, index) => Column(
-                            children: [
-                              ListTile(
-                                leading: CircleAvatar(
-                                  child: Text('Date${index + 1}'),
-                                ),
-                                title: Text(realTimeTrip!.program[index]),
-                              ),
-                              const Divider(),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          debugPrint('selcted Cat${widget.categoryId}');
-                          // debugPrint('selcted hotel${selectedHotel.id}');
-                          _selectDateAndBook(context, trip);
-
-                          // _bookHotel(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 100),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: AppColors.primaryElementBg,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 4,
-                                )
-                              ]),
-                          child: const Text(
-                            "Book ",
-                            style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 26,
                             ),
                           ),
-                        ),
+                          Positioned(
+                            top: 30,
+                            left: 15,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                width: 35,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(45),
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 15,
+                            left: 15,
+                            child: SizedBox(
+                              height: 100,
+                              width:
+                                  (MediaQuery.of(context).size.width / 4) * 3.5,
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(trip.title,
+                                        maxLines: 2,
+                                        softWrap: true,
+                                        overflow: TextOverflow.visible,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(
+                                              fontFamily: 'BebasNeue',
+                                              color: Colors.white,
+                                              overflow: TextOverflow.visible,
+                                              fontSize: 40,
+                                            )),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(
-                        height: 10,
-                      )
-                    ],
-                  ),
+                    ),
+                    SliverList(
+                      delegate: SliverChildListDelegate(
+                        [
+                          Column(
+                            children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  debugPrint('selcted Cat${widget.categoryId}');
+                                  debugPrint('selcted trip${realTimeTrip!.id}');
+                                  _selectDateAndBook(context, trip);
+
+                                  // _bookTrip(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                  ),
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 30),
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: AppColors.primary_bg,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Book ",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall!
+                                          .copyWith(
+                                            fontFamily: 'Brand-Bold',
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 26,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              cardContainer([
+                                buildSelectionTitle(context, 'Trip Type'),
+                                buildItemsListContainer(
+                                    list: [realTimeTrip!.tripType], height: 70),
+                              ]),
+                              cardContainer([
+                                buildSelectionTitle(
+                                    context, 'Available places'),
+                                buildItemsListContainer(
+                                    list: ['${realTimeTrip!.rooms}'],
+                                    height: 50),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                              ]),
+                              cardContainer([
+                                buildSelectionTitle(context, 'Duration'),
+                                buildItemsListContainer(
+                                    list: ['${realTimeTrip!.duration}'],
+                                    height: 70),
+                              ]),
+                              cardContainer([
+                                buildSelectionTitle(context, 'Season'),
+                                buildItemsListContainer(
+                                    list: [realTimeTrip!.season], height: 70),
+                              ]),
+                              cardContainer([
+                                buildSelectionTitle(context, 'Activities'),
+                                buildItemsListContainer(
+                                    list: realTimeTrip!.activities,
+                                    height: 150),
+                              ]),
+                              cardContainer([
+                                buildSelectionTitle(context, 'Program'),
+                                buildItemsListContainer(
+                                    list: realTimeTrip!.program, height: 120),
+                              ]),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 );
               } catch (e) {
                 debugPrint('${e.toString()}');
@@ -236,7 +352,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
           .collection('trips_list')
           .doc(trip.id)
           .update({'rooms': trip.rooms - 1}).then((value) => toastInfo(
-              msg: 'Trip Reserved Successfully',
+              msg: 'Trip Booked Successfully',
               textColor: Colors.white,
               backgroundColor: AppColors.primaryElementStatus));
 

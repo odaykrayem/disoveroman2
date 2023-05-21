@@ -15,6 +15,12 @@ class ApplicationPage extends StatefulWidget {
 }
 
 class _ApplicationPageState extends State<ApplicationPage> {
+  @override
+  void initState() {
+    context.read<AppBlocs>().add(const TriggerAppEvent(0));
+    super.initState();
+  }
+
   // int _index = 0;
   @override
   Widget build(BuildContext context) {

@@ -6,6 +6,7 @@ import '../common/values/color.dart';
 import '../common/values/constant.dart';
 import '../models/hotel.dart';
 import '../utils/global.dart';
+import '../widgets/card_container.dart';
 import '../widgets/hotel_item.dart';
 
 class Reservations extends StatefulWidget {
@@ -38,11 +39,14 @@ class _ReservationsState extends State<Reservations> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text('Reservations',
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Colors.black45,
-                    overflow: TextOverflow.visible,
-                  )),
+          title: Text(
+            'Reservations',
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                color: AppColors.primaryElementStatus,
+                fontSize: 29,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Brand-Regular'),
+          ),
         ),
         body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
             stream: FirebaseFirestore.instance
@@ -68,60 +72,66 @@ class _ReservationsState extends State<Reservations> {
 
                   return ListView.builder(
                     itemBuilder: (ctx, index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        height: 100,
-                        padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 10),
-                        child: ListTile(
-                          contentPadding: EdgeInsets.all(5),
-                          leading: const Icon(
-                            Icons.book,
-                            size: 40,
-                            color: AppColors.primaryElement,
-                          ),
-                          isThreeLine: true,
-                          title: Text(reservations[index].title,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall!
-                                  .copyWith(
-                                    fontSize: 20,
-                                    color: Colors.black45,
-                                    overflow: TextOverflow.visible,
-                                  )),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(reservations[index].date,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .copyWith(
-                                          fontSize: 20,
-                                          color: Colors.black45,
-                                          overflow: TextOverflow.visible,
-                                        )),
-                                Text(reservations[index].type,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .copyWith(
-                                          fontSize: 20,
-                                          color: Colors.black45,
-                                          overflow: TextOverflow.visible,
-                                        )),
-                              ],
+                      return cardContainer(
+                        [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            height: 100,
+                            padding: const EdgeInsets.all(10),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 10),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.all(5),
+                              leading: const Icon(
+                                Icons.book,
+                                size: 40,
+                                color: AppColors.primaryElement,
+                              ),
+                              isThreeLine: true,
+                              title: Text(reservations[index].title,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall!
+                                      .copyWith(
+                                        fontSize: 20,
+                                        color: Colors.black45,
+                                        overflow: TextOverflow.visible,
+                                      )),
+                              subtitle: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(reservations[index].date,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall!
+                                            .copyWith(
+                                              fontSize: 20,
+                                              color: Colors.black45,
+                                              overflow: TextOverflow.visible,
+                                            )),
+                                    Text(reservations[index].type,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall!
+                                            .copyWith(
+                                              fontSize: 20,
+                                              color: Colors.black45,
+                                              overflow: TextOverflow.visible,
+                                            )),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       );
 
                       // Text(reservations[index].title);

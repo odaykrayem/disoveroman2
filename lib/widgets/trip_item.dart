@@ -71,7 +71,10 @@ class TripItem extends StatelessWidget {
                       ])),
                   child: Text(
                     trip.title,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge!
+                        .copyWith(fontFamily: 'BebasNeue'),
                     overflow: TextOverflow.fade,
                   ),
                 )

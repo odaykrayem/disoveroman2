@@ -9,6 +9,7 @@ import '../models/hotel.dart';
 import '../pages/booking_page.dart';
 import '../utils/flutter_toast.dart';
 import '../utils/global.dart';
+import '../widgets/card_container.dart';
 
 class HotelDetailsScreen extends StatefulWidget {
   final Hotel hotel;
@@ -30,55 +31,51 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
 
   Widget buildSelectionTitle(BuildContext context, String titleText) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      // margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       alignment: Alignment.topLeft,
       child: Text(
         titleText,
-        style: Theme.of(context).textTheme.headlineSmall,
+        style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              fontSize: 20,
+              fontFamily: 'Brand-Bold',
+              color: AppColors.primary_bg,
+            ),
       ),
     );
   }
 
-  void _bookHotel(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const BookingPage(),
-      ),
-    );
-  }
-
-  Widget buildListViewContainer(Widget child) {
+  Widget buildItemsListContainer(
+      {required List<String> list, double height = 200}) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey),
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(10),
       ),
-      height: 200,
-      padding: const EdgeInsets.all(10),
+      height: height,
       margin: const EdgeInsets.symmetric(horizontal: 15),
-      child: child,
+      child: Center(
+        child: Wrap(
+          spacing: 20,
+          clipBehavior: Clip.none,
+          children: list
+              .map((e) => Chip(
+                    label: Text(
+                      e,
+                    ),
+                  ))
+              .toList(),
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // final hotelId = widget.id;
-    // final hotel =
-    //     Hotel_data.firstWhere((hotel) => hotel.id == hotelId);
     final hotel = widget.hotel;
     Hotel? realTimeHotel;
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(hotel.title,
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Colors.black45,
-                overflow: TextOverflow.visible,
-                fontSize: 20)),
-      ),
       body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
           stream: FirebaseFirestore.instance
               .collection('hotels')
@@ -93,122 +90,164 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
               if (!snapshot.hasData) {
                 return SkeletonListView();
               }
-              // debugPrint('${snapshot.data!['name']}');
               try {
                 realTimeHotel = Hotel.fromJson(snapshot.data!.data()!);
-
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 300,
-                        width: double.infinity,
-                        child: hotel.images.contains('google')
-                            ? Image.network(
-                                hotel.images,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset(
-                                hotel.images,
-                                fit: BoxFit.cover,
-                              ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      buildSelectionTitle(context, 'Location'),
-                      buildListViewContainer(
-                        ListView.builder(
-                            itemCount: realTimeHotel!.location.length,
-                            itemBuilder: (ctc, index) => Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 5,
-                                      horizontal: 10,
+                return CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      automaticallyImplyLeading: false,
+                      expandedHeight: 300,
+                      flexibleSpace: Stack(
+                        children: [
+                          Positioned(
+                            top: 0,
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: SizedBox(
+                              height: 300,
+                              width: double.infinity,
+                              child: hotel.images.contains('google')
+                                  ? Image.network(
+                                      hotel.images,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.asset(
+                                      hotel.images,
+                                      fit: BoxFit.cover,
                                     ),
-                                    child: Text(
-                                      realTimeHotel!.location[index],
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                )),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      buildSelectionTitle(context, 'Available rooms'),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        height: 50,
-                        padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Text('${realTimeHotel!.rooms}'),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      buildSelectionTitle(context, 'Details'),
-                      buildListViewContainer(
-                        ListView.builder(
-                          itemCount: realTimeHotel!.details.length,
-                          itemBuilder: (ctx, index) => Column(
-                            children: [
-                              ListTile(
-                                leading: CircleAvatar(
-                                  child: Text('${index + 1}'),
-                                ),
-                                title: Text(realTimeHotel!.details[index]),
-                              ),
-                              const Divider(),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          debugPrint('selcted Cat${widget.categoryId}');
-                          debugPrint('selcted hotel${realTimeHotel!.id}');
-                          _selectDateAndBook(context, hotel);
-
-                          // _bookHotel(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 100),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: AppColors.primaryElementBg,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 4,
-                                )
-                              ]),
-                          child: const Text(
-                            "Book ",
-                            style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 26,
                             ),
                           ),
-                        ),
+                          Positioned(
+                            top: 30,
+                            left: 15,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                width: 35,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(45),
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 15,
+                            left: 15,
+                            child: SizedBox(
+                              height: 100,
+                              width:
+                                  (MediaQuery.of(context).size.width / 4) * 3.5,
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(hotel.title,
+                                        maxLines: 2,
+                                        softWrap: true,
+                                        overflow: TextOverflow.visible,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(
+                                              fontFamily: 'BebasNeue',
+                                              color: Colors.white,
+                                              overflow: TextOverflow.visible,
+                                              fontSize: 40,
+                                            )),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(
-                        height: 10,
-                      )
-                    ],
-                  ),
+                    ),
+                    SliverList(
+                      delegate: SliverChildListDelegate(
+                        [
+                          Column(
+                            children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  debugPrint('selcted Cat${widget.categoryId}');
+                                  debugPrint(
+                                      'selcted hotel${realTimeHotel!.id}');
+                                  _selectDateAndBook(context, hotel);
+
+                                  // _bookHotel(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                  ),
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 30),
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: AppColors.primary_bg,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Book ",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall!
+                                          .copyWith(
+                                            fontFamily: 'Brand-Bold',
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 26,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              cardContainer([
+                                buildSelectionTitle(context, 'Location'),
+                                buildItemsListContainer(
+                                    list: realTimeHotel!.location, height: 70),
+                              ]),
+                              cardContainer([
+                                buildSelectionTitle(context, 'Available rooms'),
+                                buildItemsListContainer(
+                                    list: ['${realTimeHotel!.rooms}'],
+                                    height: 50),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                              ]),
+                              cardContainer([
+                                buildSelectionTitle(context, 'Details'),
+                                buildItemsListContainer(
+                                    list: realTimeHotel!.details),
+                              ]),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 );
               } catch (e) {
                 debugPrint('${e.toString()}');

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:disoveroman2/widgets/trip_item.dart';
 import 'package:flutter/material.dart';
 import 'package:skeletons/skeletons.dart';
+import '../common/values/color.dart';
 import '../models/trip.dart';
 
 class TripsScreen extends StatefulWidget {
@@ -32,7 +33,7 @@ class _TripHomeItemState extends State<TripsScreen> {
           centerTitle: true,
           title: Text(categoryTitle,
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Colors.black45,
+                    color: AppColors.primaryElementStatus,
                     overflow: TextOverflow.visible,
                   )),
         ),

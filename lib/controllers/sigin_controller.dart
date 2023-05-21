@@ -15,8 +15,10 @@ class SignInController {
     try {
       if (type == "email") {
         final state = context.read<SignInBloc>().state;
-        String emailAddress = state.email;
-        String password = state.password;
+        // String emailAddress = state.email;
+        // String password = state.password;
+        String emailAddress = 'oday.krayem.997@gmail.com';
+        String password = 'o123456';
 
         if (emailAddress.isEmpty) {
           toastInfo(msg: "You need to fill email address");

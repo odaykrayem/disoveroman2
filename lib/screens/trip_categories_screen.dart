@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:skeletons/skeletons.dart';
+import '../common/values/color.dart';
 import '../data/trip_categories_data.dart';
 import '../models/category_trip.dart';
 import '../models/trip.dart';
@@ -39,10 +40,10 @@ class _TripCatogariesScreenState extends State<TripCatogariesScreen> {
           title: Text(
             'Tourist Guide',
             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                color: Colors.black45,
+                color: AppColors.primaryElementStatus,
                 fontSize: 29,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'AprilFatface'),
+                fontFamily: 'Brand-Regular'),
           ),
           backgroundColor: Colors.white,
           centerTitle: true,

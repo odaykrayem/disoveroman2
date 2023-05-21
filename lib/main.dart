@@ -1,3 +1,4 @@
+import 'package:disoveroman2/utils/scroll_glowing_remover.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,12 @@ class MyApp extends StatelessWidget {
         providers: [...AppPages.allBlocProviders(context)],
         child: ScreenUtilInit(
           builder: (context, child) => MaterialApp(
+            builder: (context, child) {
+              return ScrollConfiguration(
+                behavior: MyBehavior(),
+                child: child!,
+              );
+            },
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
                 primaryColor: Colors.green,
