@@ -46,75 +46,48 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
   Widget buildItemsListContainer(
       {required List<String> list, double height = 200}) {
+    if (list.length > 8) height = 283;
+    if (list.length > 10) height = 320;
+    if (list.length < 3) height = 110;
+    if (list.length < 2) height = 75;
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      height: height,
-      margin: const EdgeInsets.symmetric(horizontal: 15),
-      child: Center(
-        child: list.length > 3
-            ? SingleChildScrollView(
-                child: Wrap(
-                  spacing: 20,
-                  clipBehavior: Clip.none,
-                  children: list
-                      .map((e) => Chip(
-                            label: e.length > 40
-                                ? SizedBox(
-                                    // height: 100,
-                                    // width:
-                                    //     (MediaQuery.of(context).size.width / 4) * 3.5,
-                                    child: Row(
-                                      children: [
-                                        Flexible(
-                                            child: Text(
-                                          e,
-                                          overflow: TextOverflow.visible,
-                                          maxLines: 2,
-                                          softWrap: true,
-                                        )),
-                                      ],
-                                    ),
-                                  )
-                                : Text(
-                                    e,
-                                  ),
-                          ))
-                      .toList(),
-                ),
-              )
-            : Wrap(
-                spacing: 20,
-                clipBehavior: Clip.none,
-                children: list
-                    .map((e) => Chip(
-                          label: e.length > 40
-                              ? SizedBox(
-                                  // height: 100,
-                                  // width:
-                                  //     (MediaQuery.of(context).size.width / 4) * 3.5,
-                                  child: Row(
-                                    children: [
-                                      Flexible(
-                                          child: Text(
-                                        e,
-                                        overflow: TextOverflow.visible,
-                                        maxLines: 2,
-                                        softWrap: true,
-                                      )),
-                                    ],
-                                  ),
-                                )
-                              : Text(
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        height: height,
+        margin: const EdgeInsets.symmetric(horizontal: 15),
+        child: Center(
+            child: Wrap(
+          spacing: 20,
+          clipBehavior: Clip.none,
+          children: list
+              .map((e) => Chip(
+                    // labelPadding:
+                    //     EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                    label: e.length > 40
+                        ? SizedBox(
+                            // height: 100,
+                            // width:
+                            //     (MediaQuery.of(context).size.width / 4) * 3.5,
+                            child: Row(
+                              children: [
+                                Flexible(
+                                    child: Text(
                                   e,
-                                ),
-                        ))
-                    .toList(),
-              ),
-      ),
-    );
+                                  overflow: TextOverflow.visible,
+                                  maxLines: 2,
+                                  softWrap: true,
+                                )),
+                              ],
+                            ),
+                          )
+                        : Text(
+                            e,
+                          ),
+                  ))
+              .toList(),
+        )));
   }
 
   @override
@@ -275,10 +248,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                                 buildSelectionTitle(
                                     context, 'Available places'),
                                 buildItemsListContainer(
-                                    list: ['${realTimeTrip!.rooms}'],
-                                    height: 50),
-                                const SizedBox(
-                                  height: 5,
+                                  list: ['${realTimeTrip!.rooms}'],
                                 ),
                               ]),
                               cardContainer([
@@ -290,13 +260,14 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                               cardContainer([
                                 buildSelectionTitle(context, 'Season'),
                                 buildItemsListContainer(
-                                    list: [realTimeTrip!.season], height: 70),
+                                  list: [realTimeTrip!.season],
+                                ),
                               ]),
                               cardContainer([
                                 buildSelectionTitle(context, 'Activities'),
                                 buildItemsListContainer(
                                     list: realTimeTrip!.activities,
-                                    height: 150),
+                                    height: 200),
                               ]),
                               cardContainer([
                                 buildSelectionTitle(context, 'Program'),
@@ -328,7 +299,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
         initialDate: selectedDate,
         firstDate: DateTime(2023, 5, 20),
         lastDate: DateTime(2040));
-    if (picked != null && picked != selectedDate) {
+    if (picked != null) {
       selectedDate = picked;
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       String formattedDate = formatter.format(selectedDate);

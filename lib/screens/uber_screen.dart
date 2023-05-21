@@ -357,14 +357,15 @@ class _UberScreenState extends State<UberScreen> {
         onPressed: onPressed,
         style: ButtonStyle(
           elevation: MaterialStateProperty.all(0),
-          backgroundColor: MaterialStateProperty.all(AppColors.primaryElement),
+          backgroundColor:
+              MaterialStateProperty.all(AppColors.primaryElementStatus),
           shape: MaterialStateProperty.all(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5.0),
             ),
           ),
         ),
-        child: const Text('save',
+        child: const Text('Submit',
             style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w500,

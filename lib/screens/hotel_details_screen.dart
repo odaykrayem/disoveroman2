@@ -47,6 +47,9 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
 
   Widget buildItemsListContainer(
       {required List<String> list, double height = 200}) {
+    if (list.length > 8) height = 283;
+    if (list.length > 10) height = 320;
+    if (list.length < 3) height = 100;
     return Container(
       decoration: BoxDecoration(
         color: Colors.transparent,
@@ -57,7 +60,7 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
       child: Center(
         child: Wrap(
           spacing: 20,
-          clipBehavior: Clip.none,
+          clipBehavior: Clip.hardEdge,
           children: list
               .map((e) => Chip(
                     label: Text(
@@ -264,7 +267,7 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
         initialDate: selectedDate,
         firstDate: DateTime(2023, 5, 20),
         lastDate: DateTime(2040));
-    if (picked != null && picked != selectedDate) {
+    if (picked != null) {
       selectedDate = picked;
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       String formattedDate = formatter.format(selectedDate);

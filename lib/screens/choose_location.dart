@@ -230,14 +230,14 @@ class _ChooseLocationState extends State<ChooseLocation> {
             style: ButtonStyle(
               elevation: MaterialStateProperty.all(0),
               backgroundColor:
-                  MaterialStateProperty.all(AppColors.primaryElement),
+                  MaterialStateProperty.all(AppColors.primaryElementStatus),
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.0),
                 ),
               ),
             ),
-            child: const Text('save',
+            child: const Text('Save Location',
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,

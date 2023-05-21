@@ -7,6 +7,7 @@ import '../common/values/constant.dart';
 import '../models/hotel.dart';
 import '../utils/global.dart';
 import '../widgets/card_container.dart';
+import '../widgets/divider.dart';
 import '../widgets/hotel_item.dart';
 
 class Reservations extends StatefulWidget {
@@ -26,28 +27,23 @@ class Reservations extends StatefulWidget {
 }
 
 class _ReservationsState extends State<Reservations> {
-  //final String categoryId;
   @override
   Widget build(BuildContext context) {
-    // final filteredHotels = Hotel_data.where((hotel) {
-    //   return hotel.categories.contains(widget.categoryId);
-    // }).toList();
-
     List<Reservation> reservations = [];
     String userID =
         Global.storageService.getString(AppConstants.STORAGE_USER_UID_KEY);
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            'Reservations',
-            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                color: AppColors.primaryElementStatus,
-                fontSize: 29,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Brand-Regular'),
-          ),
-        ),
+        // appBar: AppBar(
+        //   centerTitle: true,
+        //   title: Text(
+        //     'Reservations',
+        //     style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+        //         color: AppColors.primaryElementStatus,
+        //         fontSize: 29,
+        //         fontWeight: FontWeight.bold,
+        //         fontFamily: 'Brand-Regular'),
+        //   ),
+        // ),
         body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
             stream: FirebaseFirestore.instance
                 .collection('users_reservations')
@@ -66,80 +62,46 @@ class _ReservationsState extends State<Reservations> {
                   reservations = snapshot.data!.docs.map((document) {
                     debugPrint('docid:: ${document.id}');
                     debugPrint('docid:: ${document.data}');
-                    // debugPrint('rooms ${document.data()[0]['rooms']}');
                     return Reservation.fromJson(document.data());
                   }).toList();
 
                   return ListView.builder(
                     itemBuilder: (ctx, index) {
-                      return cardContainer(
-                        [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            height: 100,
-                            padding: const EdgeInsets.all(10),
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 10),
-                            child: ListTile(
-                              contentPadding: EdgeInsets.all(5),
-                              leading: const Icon(
-                                Icons.book,
-                                size: 40,
-                                color: AppColors.primaryElement,
-                              ),
-                              isThreeLine: true,
-                              title: Text(reservations[index].title,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall!
-                                      .copyWith(
-                                        fontSize: 20,
-                                        color: Colors.black45,
-                                        overflow: TextOverflow.visible,
-                                      )),
-                              subtitle: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(reservations[index].date,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall!
-                                            .copyWith(
-                                              fontSize: 20,
-                                              color: Colors.black45,
-                                              overflow: TextOverflow.visible,
-                                            )),
-                                    Text(reservations[index].type,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall!
-                                            .copyWith(
-                                              fontSize: 20,
-                                              color: Colors.black45,
-                                              overflow: TextOverflow.visible,
-                                            )),
-                                  ],
-                                ),
-                              ),
-                            ),
+                      return cardContainer([
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ],
-                      );
-
-                      // Text(reservations[index].title);
-
-                      // HotelItem(
-                      //   categoryId: widget.categoryId,
-                      //   hotel: hotels[index],
-                      // );
+                          height: 270,
+                          padding: const EdgeInsets.all(10),
+                          margin: const EdgeInsets.all(5),
+                          child: Column(
+                            children: [
+                              buildItemLine(
+                                'Location',
+                                reservations[index].title,
+                                Icons.location_searching_outlined,
+                              ),
+                              const DividerWidget(height: 0),
+                              buildItemLine(
+                                'Reservation Type',
+                                reservations[index].type,
+                                Icons.local_activity_sharp,
+                              ),
+                              const DividerWidget(height: 0),
+                              buildItemLine(
+                                'Reservation Date',
+                                reservations[index].date,
+                                Icons.date_range_outlined,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                          backgroundColor: AppColors.primaryElementStatus,
+                          padding: 0);
                     },
                     itemCount: reservations.length,
                   );
@@ -149,5 +111,45 @@ class _ReservationsState extends State<Reservations> {
               }
               return SkeletonListView();
             }));
+  }
+
+  Widget buildItemLine(String title, String subtitle, IconData icon) {
+    return ListTile(
+      contentPadding: const EdgeInsets.all(5),
+      leading: Container(
+        height: 30,
+        width: 30,
+        decoration: BoxDecoration(
+            border: Border.all(color: AppColors.primaryElement),
+            borderRadius: BorderRadius.circular(30)),
+        child: Icon(
+          icon,
+          size: 25,
+          color: AppColors.primaryElement,
+        ),
+      ),
+      // isThreeLine: true,
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 14),
+      ),
+      subtitle: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Text(
+                subtitle,
+                maxLines: 2,
+                style: const TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
